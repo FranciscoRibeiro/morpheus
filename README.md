@@ -26,7 +26,7 @@ The output is a line with several fields, each separated by a _semicolon (;)_, w
 
 * ***[MUTATION_OPERATORS]:*** List with the full names of all the **inferred** mutation operators.
 
-##Building the executable
+## Building the executable
 
 This project uses Maven. In order to build a _jar file_ which can be executed similarly to the example in the beginning, simply run:
 
