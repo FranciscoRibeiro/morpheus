@@ -8,7 +8,7 @@ import spoon.reflect.code.CtAssignment
 import spoon.reflect.code.CtReturn
 import spoon.reflect.declaration.CtElement
 
-class StatementDeletion() : MutationOperator<StatementDeletion> {
+class StatementDeletion() : MutationOperator<StatementDeletion>() {
     lateinit var delElem: CtElement
 
     constructor(delElem: CtElement): this(){

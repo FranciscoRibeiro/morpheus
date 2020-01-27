@@ -10,7 +10,7 @@ import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isConditional
 
-class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInsertion> {
+class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInsertion>() {
     lateinit var fromElem: CtElement
     lateinit var toOp: CtBinaryOperator<*>
 

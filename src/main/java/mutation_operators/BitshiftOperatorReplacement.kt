@@ -8,7 +8,7 @@ import utils.isArithmetic
 import utils.isBitshift
 import utils.isConditional
 
-class BitshiftOperatorReplacement() : MutationOperator<BitshiftOperatorReplacement> {
+class BitshiftOperatorReplacement() : MutationOperator<BitshiftOperatorReplacement>() {
     lateinit var fromOp: CtBinaryOperator<*>
     lateinit var toOp: CtBinaryOperator<*>
 

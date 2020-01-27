@@ -7,7 +7,7 @@ import spoon.reflect.code.CtTypeAccess
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 
-class VarToVarReplacement() : MutationOperator<VarToVarReplacement> {
+class VarToVarReplacement() : MutationOperator<VarToVarReplacement>() {
     lateinit var fromVar: CtElement
     lateinit var toVar: CtElement
 

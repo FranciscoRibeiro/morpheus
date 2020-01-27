@@ -10,7 +10,7 @@ import spoon.reflect.code.CtUnaryOperator
 import spoon.reflect.declaration.CtElement
 import utils.retrieveValue
 
-class ConstantReplacement(): MutationOperator<ConstantReplacement> {
+class ConstantReplacement(): MutationOperator<ConstantReplacement>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
     var insideCriteria: Boolean = true

@@ -14,7 +14,7 @@ import utils.isArithmetic
 import utils.isConditional
 import utils.isTypeString
 
-class ConstructorCallReplacementNull(): MutationOperator<ConstructorCallReplacementNull> {
+class ConstructorCallReplacementNull(): MutationOperator<ConstructorCallReplacementNull>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

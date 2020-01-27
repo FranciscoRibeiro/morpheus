@@ -7,7 +7,7 @@ import spoon.reflect.code.CtBinaryOperator
 import utils.isArithmetic
 import utils.isConditional
 
-class ArithmeticOperatorReplacement() : MutationOperator<ArithmeticOperatorReplacement> {
+class ArithmeticOperatorReplacement() : MutationOperator<ArithmeticOperatorReplacement>() {
     lateinit var fromOp: CtBinaryOperator<*>
     lateinit var toOp: CtBinaryOperator<*>
 

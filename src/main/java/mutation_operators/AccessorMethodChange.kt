@@ -11,7 +11,7 @@ import spoon.reflect.declaration.*
 import utils.isAccessor
 import utils.hasOneAccessor
 
-class AccessorMethodChange() : MutationOperator<AccessorMethodChange> {
+class AccessorMethodChange() : MutationOperator<AccessorMethodChange>() {
     lateinit var fromInvoc: CtInvocation<*>
     lateinit var toInvoc: CtInvocation<*>
 

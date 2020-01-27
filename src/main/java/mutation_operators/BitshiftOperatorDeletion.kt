@@ -13,7 +13,7 @@ import utils.isBitshift
 import utils.isConditional
 import utils.isTypeString
 
-class BitshiftOperatorDeletion(): MutationOperator<BitshiftOperatorDeletion> {
+class BitshiftOperatorDeletion(): MutationOperator<BitshiftOperatorDeletion>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

@@ -8,7 +8,7 @@ import spoon.reflect.code.CtReturn
 import spoon.reflect.declaration.CtElement
 import utils.retrieveValue
 
-class TrueReturn() : MutationOperator<TrueReturn> {
+class TrueReturn() : MutationOperator<TrueReturn>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

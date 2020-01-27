@@ -8,7 +8,7 @@ import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isArithmetic
 
-class ReferenceReplacementContent() : MutationOperator<ReferenceReplacementContent> {
+class ReferenceReplacementContent() : MutationOperator<ReferenceReplacementContent>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

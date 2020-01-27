@@ -8,7 +8,7 @@ import spoon.reflect.code.CtUnaryOperator
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 
-class UnaryOperatorInsertion() : MutationOperator<UnaryOperatorInsertion> {
+class UnaryOperatorInsertion() : MutationOperator<UnaryOperatorInsertion>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

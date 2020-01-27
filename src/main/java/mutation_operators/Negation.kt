@@ -12,7 +12,7 @@ import spoon.reflect.declaration.CtElement
 import utils.isArithmetic
 import utils.isTypeString
 
-class Negation() : MutationOperator<Negation> {
+class Negation() : MutationOperator<Negation>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

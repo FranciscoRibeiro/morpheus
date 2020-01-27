@@ -13,7 +13,7 @@ import utils.isArithmetic
 import utils.isConditional
 import utils.isTypeString
 
-class UnaryOperatorDeletion(): MutationOperator<UnaryOperatorDeletion> {
+class UnaryOperatorDeletion(): MutationOperator<UnaryOperatorDeletion>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

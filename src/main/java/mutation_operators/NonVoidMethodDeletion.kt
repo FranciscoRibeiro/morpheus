@@ -6,7 +6,7 @@ import spoon.reflect.code.CtInvocation
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 
-class NonVoidMethodDeletion() : MutationOperator<NonVoidMethodDeletion> {
+class NonVoidMethodDeletion() : MutationOperator<NonVoidMethodDeletion>() {
     lateinit var delInvoc: CtInvocation<*>
 
     constructor(delInvoc: CtInvocation<*>): this() {

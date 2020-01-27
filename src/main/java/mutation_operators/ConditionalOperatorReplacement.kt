@@ -6,7 +6,7 @@ import gumtree.spoon.diff.operations.UpdateOperation
 import spoon.reflect.code.CtBinaryOperator
 import utils.isConditional
 
-class ConditionalOperatorReplacement() : MutationOperator<ConditionalOperatorReplacement> {
+class ConditionalOperatorReplacement() : MutationOperator<ConditionalOperatorReplacement>() {
     lateinit var fromOp: CtBinaryOperator<*>
     lateinit var toOp: CtBinaryOperator<*>
 

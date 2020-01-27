@@ -8,7 +8,7 @@ import gumtree.spoon.diff.operations.Operation
 import spoon.reflect.code.CtInvocation
 import spoon.reflect.code.CtVariableRead
 
-class VoidMethodDeletion() : MutationOperator<VoidMethodDeletion> {
+class VoidMethodDeletion() : MutationOperator<VoidMethodDeletion>() {
     lateinit var delInvoc: CtInvocation<*>
 
     constructor(delInvoc: CtInvocation<*>): this() {

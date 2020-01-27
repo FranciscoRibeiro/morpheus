@@ -14,7 +14,7 @@ import spoon.reflect.declaration.CtField
 import utils.isConditional
 import utils.isDefaultValue
 
-class MemberVariableAssignmentDeletion(): MutationOperator<MemberVariableAssignmentDeletion> {
+class MemberVariableAssignmentDeletion(): MutationOperator<MemberVariableAssignmentDeletion>() {
     lateinit var delElem: CtElement
 
     constructor(delElem: CtElement): this() {

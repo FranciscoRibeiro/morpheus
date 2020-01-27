@@ -13,7 +13,7 @@ import spoon.reflect.declaration.CtElement
 import spoon.reflect.declaration.CtField
 import spoon.reflect.declaration.ModifierKind
 
-class StaticModifierDeletion(): MutationOperator<StaticModifierDeletion> {
+class StaticModifierDeletion(): MutationOperator<StaticModifierDeletion>() {
     lateinit var delElem: CtElement
 
     constructor(fromElem: CtElement): this() {

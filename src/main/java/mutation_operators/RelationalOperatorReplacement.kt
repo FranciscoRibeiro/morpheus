@@ -7,7 +7,7 @@ import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.declaration.CtElement
 import utils.isRelational
 
-class RelationalOperatorReplacement() : MutationOperator<RelationalOperatorReplacement> {
+class RelationalOperatorReplacement() : MutationOperator<RelationalOperatorReplacement>() {
     lateinit var fromOp: CtElement
     lateinit var toOp: CtElement
 

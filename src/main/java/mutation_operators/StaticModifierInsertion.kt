@@ -13,7 +13,7 @@ import spoon.reflect.declaration.CtField
 import spoon.reflect.declaration.ModifierKind
 import utils.hasOneStatic
 
-class StaticModifierInsertion(): MutationOperator<StaticModifierInsertion> {
+class StaticModifierInsertion(): MutationOperator<StaticModifierInsertion>() {
     lateinit var elem: CtElement
 
     constructor(fromElem: CtElement): this() {

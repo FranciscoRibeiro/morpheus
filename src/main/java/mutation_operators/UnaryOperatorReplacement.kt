@@ -9,7 +9,7 @@ import utils.areOpposite
 import utils.isArithmetic
 import utils.isConditional
 
-class UnaryOperatorReplacement() : MutationOperator<UnaryOperatorReplacement> {
+class UnaryOperatorReplacement() : MutationOperator<UnaryOperatorReplacement>() {
     lateinit var fromOp: CtUnaryOperator<*>
     lateinit var toOp: CtUnaryOperator<*>
     var insideCriteria: Boolean = true

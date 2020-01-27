@@ -13,7 +13,7 @@ import spoon.reflect.declaration.ModifierKind
 import utils.isAccessor
 import utils.hasOneAccessor
 
-class AccessorModifierChange() : MutationOperator<AccessorModifierChange> {
+class AccessorModifierChange() : MutationOperator<AccessorModifierChange>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

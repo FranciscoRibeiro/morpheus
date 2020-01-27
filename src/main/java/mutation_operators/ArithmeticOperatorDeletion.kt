@@ -12,7 +12,7 @@ import utils.isArithmetic
 import utils.isConditional
 import utils.isTypeString
 
-class ArithmeticOperatorDeletion(): MutationOperator<ArithmeticOperatorDeletion> {
+class ArithmeticOperatorDeletion(): MutationOperator<ArithmeticOperatorDeletion>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

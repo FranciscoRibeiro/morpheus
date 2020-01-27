@@ -9,7 +9,7 @@ import spoon.reflect.declaration.CtParameter
 import spoon.reflect.reference.CtTypeReference
 import utils.isBitshift
 
-class ArgumentTypeChange() : MutationOperator<ArgumentTypeChange> {
+class ArgumentTypeChange() : MutationOperator<ArgumentTypeChange>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

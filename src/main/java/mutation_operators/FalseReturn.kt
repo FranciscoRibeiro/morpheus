@@ -8,7 +8,7 @@ import spoon.reflect.code.CtReturn
 import spoon.reflect.declaration.CtElement
 import utils.retrieveValue
 
-class FalseReturn() : MutationOperator<FalseReturn> {
+class FalseReturn() : MutationOperator<FalseReturn>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

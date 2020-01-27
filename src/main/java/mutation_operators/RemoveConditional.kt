@@ -14,7 +14,7 @@ import spoon.reflect.declaration.ModifierKind
 import utils.isAccessor
 import utils.hasOneAccessor
 
-class RemoveConditional() : MutationOperator<RemoveConditional> {
+class RemoveConditional() : MutationOperator<RemoveConditional>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

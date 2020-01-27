@@ -11,7 +11,7 @@ import spoon.reflect.declaration.CtElement
 import utils.isArithmetic
 import utils.isTypeString
 
-class ArithmeticOperatorInsertion() : MutationOperator<ArithmeticOperatorInsertion> {
+class ArithmeticOperatorInsertion() : MutationOperator<ArithmeticOperatorInsertion>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 

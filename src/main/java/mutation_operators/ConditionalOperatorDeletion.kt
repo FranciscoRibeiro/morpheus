@@ -9,7 +9,7 @@ import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.declaration.CtElement
 import utils.isConditional
 
-class ConditionalOperatorDeletion(): MutationOperator<ConditionalOperatorDeletion> {
+class ConditionalOperatorDeletion(): MutationOperator<ConditionalOperatorDeletion>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
 
