@@ -1,10 +1,12 @@
 package mutation_operators
 
 import com.github.gumtreediff.actions.model.Action
+import gumtree.spoon.diff.operations.InsertOperation
 import gumtree.spoon.diff.operations.Operation
 import gumtree.spoon.diff.operations.UpdateOperation
 import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.code.CtConstructorCall
+import spoon.reflect.code.CtInvocation
 import spoon.reflect.declaration.CtElement
 import spoon.reflect.declaration.CtParameter
 import spoon.reflect.reference.CtTypeReference
@@ -22,6 +24,7 @@ class ArgumentNumberChange() : MutationOperator<ArgumentNumberChange>() {
     override fun check(op: Operation<Action>): MutationOperator<ArgumentNumberChange>? {
         return when(op){
             is UpdateOperation -> checkUpdate(op)
+            is InsertOperation -> checkInsertion(op)
             else -> null
         }
     }
@@ -33,6 +36,20 @@ class ArgumentNumberChange() : MutationOperator<ArgumentNumberChange>() {
                 && src.arguments.size != dest.arguments.size){
             ArgumentNumberChange(src, dest)
         } else null
+    }
+
+    private fun checkInsertion(insertOp: InsertOperation): MutationOperator<ArgumentNumberChange>? {
+        val (srcParent, insOpParent) = Pair(insertOp.srcNode.parent, insertOp.parent)
+        return if(srcParent is CtInvocation<*> && insOpParent is CtInvocation<*>
+                && isArgumentToInvocation(insertOp.srcNode, srcParent)
+                && srcParent.executable.simpleName == insOpParent.executable.simpleName
+                && srcParent.arguments.size != insOpParent.arguments.size){
+            ArgumentNumberChange(insOpParent, srcParent)
+        } else null
+    }
+
+    private fun isArgumentToInvocation(elem: CtElement, invocation: CtInvocation<*>): Boolean {
+        return invocation.arguments.contains(elem)
     }
 
     override fun toString(): String {
