@@ -28,7 +28,7 @@ class ReturnValue() : MutationOperator<ReturnValue>() {
 
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<ReturnValue>? {
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
-        return if(delSrc.parent is CtReturn<*> && insOp.parent is CtReturn<*> && delSrc.parent == insOp.parent){
+        return if(delSrc.parent is CtReturn<*> && insOp.parent is CtReturn<*> && delSrc.parent === insOp.parent){
             val (delValue, insValue) = Pair(retrieveValue(delSrc), retrieveValue(insSrc))
             if(delValue != null && insValue != null){
                 when{
