@@ -41,11 +41,14 @@ end lines of the places in the source where the corresponding inferred mutation 
 This project uses Maven. In order to build a _jar file_ which can be executed similarly to the example in the beginning, simply run:
 
 ```bash
-mvn package
+./build.sh
 ```
 
+`build.sh` is a simple script that sets necessary environment variables for the build process, like allowing Maven to use 6Gb of heap space.
+
+This is mainly due to the fact that this stage needs a considerable amount of memory. Furthermore, as this is a self-contained _jar_, although it is easier to utilize as we do not need to specify any dependencies, it negatively impact the memory footprint of the build process.
+
 The generated _jar_ will be in the `target` directory.
-The project is configured so that the dependencies are also packaged with the _jar_.
 
 ## Extending Morpheus
 
