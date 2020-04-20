@@ -24,7 +24,9 @@ class VoidMethodDeletion() : MutationOperator<VoidMethodDeletion>() {
 
     private fun checkDelete(delOp: DeleteOperation): MutationOperator<VoidMethodDeletion>? {
         val delSrc = delOp.srcNode
-        return if (delSrc is CtInvocation<*> && delSrc.executable.type.simpleName == "void") {
+        return if (delSrc is CtInvocation<*>
+                && delSrc.executable.type != null
+                && delSrc.executable.type.simpleName == "void") {
             VoidMethodDeletion(delSrc)
         } else null
     }
@@ -39,7 +41,8 @@ class VoidMethodDeletion() : MutationOperator<VoidMethodDeletion>() {
 
     private fun checkDeleteAndMove(delOp: DeleteOperation, movOp: MoveOperation): MutationOperator<VoidMethodDeletion>? {
         val (delSrc, movSrc) = Pair(delOp.srcNode, movOp.srcNode)
-        return if (delSrc is CtInvocation<*> && delSrc.target == movSrc && delSrc.executable.type.simpleName == "void") {
+        return if (delSrc is CtInvocation<*> && delSrc.target == movSrc
+                && delSrc.executable.type != null && delSrc.executable.type.simpleName == "void") {
             VoidMethodDeletion(delSrc)
         } else null
     }
@@ -47,7 +50,7 @@ class VoidMethodDeletion() : MutationOperator<VoidMethodDeletion>() {
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<VoidMethodDeletion>? {
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
         return if (delSrc is CtInvocation<*> && insSrc is CtVariableRead<*> && delSrc.target.toString() == insSrc.toString()
-                && delSrc.executable.type.simpleName == "void") {
+                && delSrc.executable.type != null && delSrc.executable.type.simpleName == "void") {
             VoidMethodDeletion(delSrc)
         } else null
     }
