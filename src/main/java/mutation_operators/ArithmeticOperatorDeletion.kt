@@ -1,16 +1,13 @@
 package mutation_operators
 
 import com.github.gumtreediff.actions.model.Action
-import gumtree.spoon.diff.operations.DeleteOperation
-import gumtree.spoon.diff.operations.InsertOperation
-import gumtree.spoon.diff.operations.MoveOperation
-import gumtree.spoon.diff.operations.Operation
+import gumtree.spoon.diff.operations.*
 import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isArithmetic
-import utils.isConditional
 import utils.isTypeString
+import java.util.function.BinaryOperator
 
 class ArithmeticOperatorDeletion(): MutationOperator<ArithmeticOperatorDeletion>() {
     lateinit var fromElem: CtElement
@@ -42,6 +39,24 @@ class ArithmeticOperatorDeletion(): MutationOperator<ArithmeticOperatorDeletion>
         return if (delSrc is CtBinaryOperator<*> && !isTypeString(delSrc) && isArithmetic(delSrc.kind)
                 && (movSrc == delSrc.leftHandOperand || movSrc == delSrc.rightHandOperand)) {
             ArithmeticOperatorDeletion(delSrc, movSrc)
+        } else null
+    }
+
+    override fun check(op1: Operation<Action>, op2: Operation<Action>, op3: Operation<Action>): MutationOperator<ArithmeticOperatorDeletion>? {
+        return when{
+            op1 is UpdateOperation && op2 is DeleteOperation && op3 is MoveOperation-> checkUpdateDeleteMove(op1, op2, op3)
+            else -> null
+        }
+    }
+
+    private fun checkUpdateDeleteMove(upOp: UpdateOperation, delOp: DeleteOperation, movOp: MoveOperation): MutationOperator<ArithmeticOperatorDeletion>? {
+        val (upSrc, upDst) = Pair(upOp.srcNode, upOp.dstNode)
+        val (delSrc, movSrc) = Pair(delOp.srcNode, movOp.srcNode)
+        return if(upDst is CtBinaryOperator<*> && upSrc is CtBinaryOperator<*> && isArithmetic(upSrc.kind)
+                && upSrc === movSrc && delSrc is CtBinaryOperator<*>){
+            if(upDst.leftHandOperand == delSrc.leftHandOperand || upDst.rightHandOperand == delSrc.rightHandOperand){
+                ArithmeticOperatorDeletion(delSrc, upDst)
+            } else null
         } else null
     }
 

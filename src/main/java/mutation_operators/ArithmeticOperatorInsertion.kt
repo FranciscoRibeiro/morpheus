@@ -1,10 +1,7 @@
 package mutation_operators
 
 import com.github.gumtreediff.actions.model.Action
-import gumtree.spoon.diff.operations.DeleteOperation
-import gumtree.spoon.diff.operations.InsertOperation
-import gumtree.spoon.diff.operations.MoveOperation
-import gumtree.spoon.diff.operations.Operation
+import gumtree.spoon.diff.operations.*
 import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
@@ -41,9 +38,31 @@ class ArithmeticOperatorInsertion() : MutationOperator<ArithmeticOperatorInserti
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
         return if (delSrc is CtVariableRead<*> && insSrc is CtBinaryOperator<*> && isArithmetic(insSrc.kind)) {
             val (delVar, insLeftOp, insRightOp) = Triple(delSrc.variable, insSrc.leftHandOperand, insSrc.rightHandOperand)
-            if(isTypeString(insLeftOp) || isTypeString(insRightOp)) null
-            else if (delVar.toString() == insLeftOp.toString() || delVar.toString() == insRightOp.toString()) {
+            if (isTypeString(insLeftOp) || isTypeString(insRightOp)) null
+            //else if (delVar.toString() == insLeftOp.toString() || delVar.toString() == insRightOp.toString()) {
+            else if ((insLeftOp is CtVariableRead<*> && delVar.simpleName == insLeftOp.variable.simpleName)
+                    || (insRightOp is CtVariableRead<*> && delVar.simpleName == insRightOp.variable.simpleName)){
                 ArithmeticOperatorInsertion(delSrc, insSrc)
+            } else null
+        } else null
+    }
+
+    override fun check(op1: Operation<Action>, op2: Operation<Action>, op3: Operation<Action>): MutationOperator<ArithmeticOperatorInsertion>? {
+        return when{
+            op1 is UpdateOperation && op2 is InsertOperation && op3 is MoveOperation-> checkUpdateInsertMove(op1, op2, op3)
+            else -> null
+        }
+    }
+
+    private fun checkUpdateInsertMove(upOp: UpdateOperation, insOp: InsertOperation, movOp: MoveOperation): MutationOperator<ArithmeticOperatorInsertion>? {
+        val (upSrc, upDst) = Pair(upOp.srcNode, upOp.dstNode)
+        val (insSrc, movSrc) = Pair(insOp.srcNode, movOp.srcNode)
+        return if(upDst is CtBinaryOperator<*> && upSrc is CtBinaryOperator<*> && isArithmetic(upDst.kind)
+                && upSrc === movSrc && insSrc === movOp.parent){
+            val movOpParent = movOp.parent as? CtBinaryOperator<*> ?: return null
+            val (upSrcLeft, upSrcRight) = Pair(upSrc.leftHandOperand, upSrc.rightHandOperand)
+            if(upSrcLeft == movOpParent.leftHandOperand || upSrcRight == movOpParent.rightHandOperand){
+                ArithmeticOperatorInsertion(upSrc, insSrc)
             } else null
         } else null
     }
