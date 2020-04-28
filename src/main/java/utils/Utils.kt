@@ -105,3 +105,11 @@ fun areOpposite(kind1: UnaryOperatorKind, kind2: UnaryOperatorKind): Boolean {
         else -> false
     }
 }
+
+fun isPlusOrMinus(kind: UnaryOperatorKind): Boolean {
+    return kind == UnaryOperatorKind.NEG || kind == UnaryOperatorKind.POS
+}
+
+fun isSignedConstant(unaryOp: CtUnaryOperator<*>): Boolean {
+    return isPlusOrMinus(unaryOp.kind) && unaryOp.operand is CtLiteral<*>
+}
