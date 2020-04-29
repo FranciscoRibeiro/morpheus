@@ -40,7 +40,8 @@ class VarToVarReplacement() : MutationOperator<VarToVarReplacement>() {
 
     private fun checkInsertAndMove(insOp: InsertOperation, movOp: MoveOperation): MutationOperator<VarToVarReplacement>? {
         val (insSrc, movSrc) = Pair(insOp.srcNode, movOp.srcNode)
-        return if(insSrc == movOp.parent && insSrc is CtVariableRead<*> && movSrc is CtVariableRead<*>){
+        return if((insSrc == movOp.parent || movSrc.parent == insOp.parent)
+                && insSrc is CtVariableRead<*> && movSrc is CtVariableRead<*>){
             VarToVarReplacement(movSrc.parent, insSrc.parent)
         } else null
     }
