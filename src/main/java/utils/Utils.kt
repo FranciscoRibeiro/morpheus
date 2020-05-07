@@ -113,3 +113,11 @@ fun isPlusOrMinus(kind: UnaryOperatorKind): Boolean {
 fun isSignedConstant(unaryOp: CtUnaryOperator<*>): Boolean {
     return isPlusOrMinus(unaryOp.kind) && unaryOp.operand is CtLiteral<*>
 }
+
+fun isPartOf(node: CtElement, container: CtExpression<*>): Boolean {
+    if (node === container) return true
+    else if (container is CtBinaryOperator<*>){
+        return isPartOf(node, container.leftHandOperand) || isPartOf(node, container.rightHandOperand)
+    }
+    else return false
+}

@@ -6,9 +6,11 @@ import gumtree.spoon.diff.operations.InsertOperation
 import gumtree.spoon.diff.operations.MoveOperation
 import gumtree.spoon.diff.operations.Operation
 import spoon.reflect.code.CtBinaryOperator
+import spoon.reflect.code.CtExpression
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isConditional
+import utils.isPartOf
 
 class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInsertion>() {
     lateinit var fromElem: CtElement
@@ -29,9 +31,13 @@ class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInser
 
     private fun checkInsertAndMove(insOp: InsertOperation, movOp: MoveOperation): MutationOperator<ConditionalOperatorInsertion>? {
         val (insSrc, movSrc) = Pair(insOp.srcNode, movOp.srcNode)
-        return if (insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind) && insSrc == movOp.parent) {
-            ConditionalOperatorInsertion(movSrc, insSrc)
-        } else null
+        val insOpParent = insOp.parent
+        if (insOpParent !is CtExpression<*> || isPartOf(movOp.dstNode, insOpParent)) {
+            return if (insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind) && insSrc == movOp.parent) {
+                ConditionalOperatorInsertion(movSrc, insSrc)
+            } else null
+        }
+        return null
     }
 
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<ConditionalOperatorInsertion>? {
