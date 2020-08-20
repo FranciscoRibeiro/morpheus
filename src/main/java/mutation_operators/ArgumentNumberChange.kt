@@ -1,30 +1,34 @@
 package mutation_operators
 
+import ASTDiff
 import com.github.gumtreediff.actions.model.Action
+import gumtree.spoon.diff.operations.DeleteOperation
 import gumtree.spoon.diff.operations.InsertOperation
 import gumtree.spoon.diff.operations.Operation
 import gumtree.spoon.diff.operations.UpdateOperation
-import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.code.CtConstructorCall
 import spoon.reflect.code.CtInvocation
 import spoon.reflect.declaration.CtElement
-import spoon.reflect.declaration.CtParameter
-import spoon.reflect.reference.CtTypeReference
-import utils.isBitshift
 
 class ArgumentNumberChange() : MutationOperator<ArgumentNumberChange>() {
     lateinit var fromElem: CtElement
     lateinit var toElem: CtElement
+    lateinit var astDiff: ASTDiff
 
     constructor(fromElem: CtElement, toElem: CtElement): this() {
         this.fromElem = fromElem
         this.toElem = toElem
     }
 
+    constructor(astDiff: ASTDiff): this() {
+        this.astDiff = astDiff
+    }
+
     override fun check(op: Operation<Action>): MutationOperator<ArgumentNumberChange>? {
         return when(op){
             is UpdateOperation -> checkUpdate(op)
             is InsertOperation -> checkInsertion(op)
+            is DeleteOperation -> checkDeletion(op)
             else -> null
         }
     }
@@ -45,6 +49,16 @@ class ArgumentNumberChange() : MutationOperator<ArgumentNumberChange>() {
                 && srcParent.executable.simpleName == insOpParent.executable.simpleName
                 && srcParent.arguments.size != insOpParent.arguments.size){
             ArgumentNumberChange(insOpParent, srcParent)
+        } else null
+    }
+
+    private fun checkDeletion(deleteOp: DeleteOperation): MutationOperator<ArgumentNumberChange>? {
+        val (src, srcParent) = Pair(deleteOp.srcNode, deleteOp.srcNode.parent)
+        return if(srcParent is CtInvocation<*> && isArgumentToInvocation(src, srcParent)){
+            val newInvocation = astDiff.afterChange(deleteOp.action)
+            if(newInvocation is CtInvocation<*> && newInvocation.arguments.size != srcParent.arguments.size) {
+                ArgumentNumberChange(srcParent, newInvocation)
+            } else null
         } else null
     }
 

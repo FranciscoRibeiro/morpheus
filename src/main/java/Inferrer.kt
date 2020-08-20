@@ -2,7 +2,7 @@ import com.github.gumtreediff.actions.model.Action
 import gumtree.spoon.diff.operations.Operation
 import mutation_operators.*
 
-class Inferrer {
+class Inferrer(val astDiff: ASTDiff) {
     private val mutOperators = setOf(
             ConstructorCallReplacementNull(),
             ArithmeticOperatorInsertion(),
@@ -34,13 +34,13 @@ class Inferrer {
             BitshiftOperatorReplacement(),
             StaticModifierInsertion(),
             ArgumentTypeChange(),
-            ArgumentNumberChange(),
+            ArgumentNumberChange(astDiff),
             BitshiftOperatorDeletion(),
             BitwiseOperatorReplacement(),
             Negation()
     )
 
-    fun infer(astDiff: ASTDiff): List<MutationOperator<*>> {
+    fun infer(): List<MutationOperator<*>> {
         return traverse(astDiff.diff.rootOperations)
     }
 

@@ -2,7 +2,7 @@ import java.io.File
 
 fun infer(originalFile: String, mutantFile: String): String {
     val astDiff = ASTDiff(File(originalFile), File(mutantFile))
-    val inferredMutOps = Inferrer().infer(astDiff)
+    val inferredMutOps = Inferrer(astDiff).infer()
     return "${originalFile};" +
             "${mutantFile};" +
             "${astDiff.size()};" +
