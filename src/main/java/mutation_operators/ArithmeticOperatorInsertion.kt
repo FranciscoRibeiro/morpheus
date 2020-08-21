@@ -3,10 +3,12 @@ package mutation_operators
 import com.github.gumtreediff.actions.model.Action
 import gumtree.spoon.diff.operations.*
 import spoon.reflect.code.CtBinaryOperator
+import spoon.reflect.code.CtExpression
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isArithmetic
 import utils.isTypeString
+import utils.simpleExpr
 
 class ArithmeticOperatorInsertion() : MutationOperator<ArithmeticOperatorInsertion>() {
     lateinit var fromElem: CtElement
@@ -36,12 +38,11 @@ class ArithmeticOperatorInsertion() : MutationOperator<ArithmeticOperatorInserti
 
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<ArithmeticOperatorInsertion>? {
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
-        return if (delSrc is CtVariableRead<*> && insSrc is CtBinaryOperator<*> && isArithmetic(insSrc.kind)) {
-            val (delVar, insLeftOp, insRightOp) = Triple(delSrc.variable, insSrc.leftHandOperand, insSrc.rightHandOperand)
+        return if (delSrc is CtExpression<*> && insSrc is CtBinaryOperator<*> && isArithmetic(insSrc.kind)) {
+            val (insLeftOp, insRightOp) = Pair(insSrc.leftHandOperand, insSrc.rightHandOperand)
             if (isTypeString(insLeftOp) || isTypeString(insRightOp)) null
-            //else if (delVar.toString() == insLeftOp.toString() || delVar.toString() == insRightOp.toString()) {
-            else if ((insLeftOp is CtVariableRead<*> && delVar.simpleName == insLeftOp.variable.simpleName)
-                    || (insRightOp is CtVariableRead<*> && delVar.simpleName == insRightOp.variable.simpleName)){
+            else if (delSrc == insLeftOp || delSrc == insRightOp) ArithmeticOperatorInsertion(delSrc, insSrc)
+            else if (simpleExpr(delSrc) == simpleExpr(insLeftOp) || simpleExpr(delSrc) == simpleExpr(insRightOp)) {
                 ArithmeticOperatorInsertion(delSrc, insSrc)
             } else null
         } else null

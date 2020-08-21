@@ -4,6 +4,7 @@ import spoon.reflect.code.*
 import spoon.reflect.declaration.CtElement
 import spoon.reflect.declaration.CtField
 import spoon.reflect.declaration.ModifierKind
+import spoon.support.reflect.code.CtVariableReadImpl
 import java.lang.NumberFormatException
 
 val defaultValues = mapOf(Pair("boolean", false),
@@ -124,4 +125,16 @@ fun isPartOf(node: CtElement, container: CtExpression<*>): Boolean {
 
 fun nullLiteral(expr: CtExpression<*>): Boolean {
     return expr.toString() == "null"
+}
+
+fun <T> simpleExpr(expr: CtExpression<T>): CtExpression<T> {
+    return when(expr){
+        is CtVariableRead<T> -> {
+            val newExpr = expr.clone()
+            newExpr.setTypeCasts<CtExpression<T>>(emptyList())
+            newExpr.setVariable<CtVariableAccess<T>>(expr.variable)
+            newExpr
+        }
+        else -> expr
+    }
 }
