@@ -121,3 +121,7 @@ fun isPartOf(node: CtElement, container: CtExpression<*>): Boolean {
     }
     else return false
 }
+
+fun nullLiteral(expr: CtExpression<*>): Boolean {
+    return expr.toString() == "null"
+}

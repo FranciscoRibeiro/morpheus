@@ -21,7 +21,7 @@ class Inferrer(val astDiff: ASTDiff) {
             UnaryOperatorInsertion(),
             ConditionalOperatorDeletion(),
             ArithmeticOperatorReplacement(),
-            MemberVariableAssignmentDeletion(),
+            MemberVariableAssignmentDeletion(astDiff),
             AccessorModifierChange(),
             RemoveConditional(),
             UnaryOperatorReplacement(),
