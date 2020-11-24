@@ -9,8 +9,10 @@ fun infer(originalFile: String, mutantFile: String): String {
             "${astDiff.getChanges()};" +
             "\"${inferredMutOps?.map { it.toString().replace("\"", "\"\"") }}\";" +
             "${inferredMutOps?.map { it.javaClass.simpleName }};" +
-            "${inferredMutOps?.map { "${it.startLine}-${it.endLine}" }};" +
-            "${inferredMutOps?.map { "${it.startColumn}-${it.endColumn}" }}"
+            "${inferredMutOps?.map { "${it.oldStartLine}-${it.oldEndLine}" }};" +
+            "${inferredMutOps?.map { "${it.oldStartColumn}-${it.oldEndColumn}" }};" +
+            "${inferredMutOps?.map { "${it.newStartLine}-${it.newEndLine}" }};" +
+            "${inferredMutOps?.map { "${it.newStartColumn}-${it.newEndColumn}" }}"
 }
 
 fun main(args: Array<String>) {

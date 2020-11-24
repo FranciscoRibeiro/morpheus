@@ -4,10 +4,14 @@ import com.github.gumtreediff.actions.model.Action
 import gumtree.spoon.diff.operations.Operation
 
 abstract class MutationOperator<T: MutationOperator<T>> {
-    var startLine: Int = 0
-    var endLine: Int = 0
-    var startColumn = 0
-    var endColumn = 0
+    var oldStartLine: Int = 0
+    var oldEndLine: Int = 0
+    var oldStartColumn = 0
+    var oldEndColumn = 0
+    var newStartLine: Int = 0
+    var newEndLine: Int = 0
+    var newStartColumn = 0
+    var newEndColumn = 0
 
     fun matches(opsSubList: List<Operation<Action>>): MutationOperator<T>?{
         val mutOp = when(opsSubList.size){
@@ -17,30 +21,62 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             else -> null
         }
         if(mutOp != null){
-            val startEndLineList = opsSubList.flatMap { startAndEndLine(it) }
-            val startEndColumnList = opsSubList.flatMap { startAndEndColumn(it) }
-            mutOp.startLine = startEndLineList.min() ?: 0
-            mutOp.endLine = startEndLineList.max() ?: 0
-            mutOp.startColumn = startEndColumnList.min() ?: 0
-            mutOp.endColumn = startEndColumnList.max() ?: 0
+            val oldStartEndLineList = opsSubList.flatMap { oldStartAndEndLine(it) }
+            val oldStartEndColumnList = opsSubList.flatMap { oldStartAndEndColumn(it) }
+            val newStartEndLineList = opsSubList.flatMap { newStartAndEndLine(it) }
+            val newStartEndColumnList = opsSubList.flatMap { newStartAndEndColumn(it) }
+            mutOp.oldStartLine = oldStartEndLineList.min() ?: 0
+            mutOp.oldEndLine = oldStartEndLineList.max() ?: 0
+            mutOp.oldStartColumn = oldStartEndColumnList.min() ?: 0
+            mutOp.oldEndColumn = oldStartEndColumnList.max() ?: 0
+            mutOp.newStartLine = newStartEndLineList.min() ?: 0
+            mutOp.newEndLine = newStartEndLineList.max() ?: 0
+            mutOp.newStartColumn = newStartEndColumnList.min() ?: 0
+            mutOp.newEndColumn = newStartEndColumnList.max() ?: 0
         }
         return mutOp
     }
 
-    private fun startAndEndColumn(op: Operation<Action>): List<Int> {
-        val position = op.srcNode.position
+    private fun newStartAndEndColumn(op: Operation<Action>): List<Int> {
         return try {
+            val position = op.dstNode.position
             listOf(position.column, position.endColumn)
-        }catch (e: UnsupportedOperationException){
+        } catch (e: UnsupportedOperationException){
+            listOf(0,0)
+        } catch (e: IllegalStateException){
             listOf(0,0)
         }
     }
 
-    private fun startAndEndLine(op: Operation<Action>): List<Int> {
-        val position = op.srcNode.position
+    private fun oldStartAndEndColumn(op: Operation<Action>): List<Int> {
         return try {
+            val position = op.srcNode.position
+            listOf(position.column, position.endColumn)
+        } catch (e: UnsupportedOperationException){
+            listOf(0,0)
+        } catch (e: IllegalStateException){
+            listOf(0,0)
+        }
+    }
+
+    private fun newStartAndEndLine(op: Operation<Action>): List<Int> {
+        return try {
+            val position = op.dstNode.position
             listOf(position.line, position.endLine)
-        }catch (e: UnsupportedOperationException){
+        } catch (e: UnsupportedOperationException){
+            listOf(0,0)
+        } catch (e: IllegalStateException){
+            listOf(0,0)
+        }
+    }
+
+    private fun oldStartAndEndLine(op: Operation<Action>): List<Int> {
+        return try {
+            val position = op.srcNode.position
+            listOf(position.line, position.endLine)
+        } catch (e: UnsupportedOperationException){
+            listOf(0,0)
+        } catch (e: IllegalStateException){
             listOf(0,0)
         }
     }
