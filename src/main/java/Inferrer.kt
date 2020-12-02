@@ -76,6 +76,6 @@ class Inferrer(val astDiff: ASTDiff) {
     }*/
 
     private fun matchOperators(opsSubList: List<Operation<Action>>): List<MutationOperator<*>> {
-        return mutOperators.mapNotNull { it.matches(opsSubList) }
+        return mutOperators.mapNotNull { it.matches(opsSubList, astDiff) }
     }
 }
