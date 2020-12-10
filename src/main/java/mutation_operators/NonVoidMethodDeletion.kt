@@ -47,8 +47,8 @@ class NonVoidMethodDeletion() : MutationOperator<NonVoidMethodDeletion>() {
 
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<NonVoidMethodDeletion>? {
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
-        return if (delSrc is CtInvocation<*> && insSrc is CtVariableRead<*> && delSrc.target.toString() == insSrc.toString()
-                && delSrc.executable.type != null && delSrc.executable.type.simpleName != "void") {
+        return if (delSrc is CtInvocation<*> && insSrc is CtVariableRead<*> && delSrc.target?.toString() == insSrc.toString()
+                && delSrc.executable.type?.simpleName != "void") {
             NonVoidMethodDeletion(delSrc)
         } else null
     }

@@ -38,11 +38,11 @@ fun retrieveValue(elem: CtElement): Any? {
 
 fun retrieveType(elem: CtElement): String? {
     return when (elem) {
-        is CtLiteral<*> -> elem.type.simpleName
-        is CtUnaryOperator<*> -> elem.type.simpleName
-        is CtBinaryOperator<*> -> elem.type.simpleName
-        is CtVariableRead<*> -> elem.variable.type.simpleName
-        is CtInvocation<*> -> elem.executable.type.simpleName
+        is CtLiteral<*> -> elem.type?.simpleName
+        is CtUnaryOperator<*> -> elem.type?.simpleName
+        is CtBinaryOperator<*> -> elem.type?.simpleName
+        is CtVariableRead<*> -> elem.variable.type?.simpleName
+        is CtInvocation<*> -> elem.executable.type?.simpleName
         else -> null
     }
 }
@@ -71,18 +71,13 @@ fun isBitwise(kind: BinaryOperatorKind): Boolean {
 }
 
 fun isTypeString(elem: CtExpression<*>): Boolean {
-    return elem.type.simpleName == "String"
+    return elem.type?.simpleName == "String"
 }
 
 fun isDefaultValue(insSrc: CtLiteral<*>): Boolean {
     val insSrcParent = insSrc.parent
     return (insSrcParent is CtAssignment<*,*>
-            && insSrc
-            .value
-            == defaultValues[
-            insSrcParent
-                    .getType()
-                    .toString()])
+            && insSrc.value == defaultValues[insSrcParent.getType()?.toString()])
 }
 
 fun isAccessor(kind: ModifierKind): Boolean {

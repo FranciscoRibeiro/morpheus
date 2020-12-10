@@ -49,8 +49,8 @@ class VoidMethodDeletion() : MutationOperator<VoidMethodDeletion>() {
 
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<VoidMethodDeletion>? {
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
-        return if (delSrc is CtInvocation<*> && insSrc is CtVariableRead<*> && delSrc.target.toString() == insSrc.toString()
-                && delSrc.executable.type != null && delSrc.executable.type.simpleName == "void") {
+        return if (delSrc is CtInvocation<*> && insSrc is CtVariableRead<*> && delSrc.target?.toString() == insSrc.toString()
+                && delSrc.executable.type?.simpleName == "void") {
             VoidMethodDeletion(delSrc)
         } else null
     }
