@@ -5,6 +5,8 @@ fun infer(originalFile: String, mutantFile: String): String {
     val inferredMutOps = Inferrer(astDiff).infer()
     return "${originalFile};" +
             "${mutantFile};" +
+            "${astDiff.fullOriginalName()};" +
+            "${astDiff.fullMutantName()};" +
             "${astDiff.size()};" +
             "${astDiff.getChanges()};" +
             "\"${inferredMutOps?.map { it.toString().replace("\"", "\"\"") }}\";" +
