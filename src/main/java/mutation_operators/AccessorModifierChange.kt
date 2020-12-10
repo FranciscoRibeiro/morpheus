@@ -43,6 +43,7 @@ class AccessorModifierChange() : MutationOperator<AccessorModifierChange>() {
             val (srcParent, destParent) = Pair(src.parent, dest.parent)
             if (srcParent is CtNamedElement && destParent is CtNamedElement
                     && srcParent.simpleName == destParent.simpleName
+                    && src.value is ModifierKind && dest.value is ModifierKind
                     && isAccessor(src.value as ModifierKind) && isAccessor(dest.value as ModifierKind)) {
                 AccessorModifierChange(src, dest)
             } else null
