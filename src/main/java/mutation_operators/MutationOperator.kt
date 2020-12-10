@@ -48,7 +48,8 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             listOf(0,0)
         } catch (e: IllegalStateException){
             position = astDiff.afterChange(op.action).position
-            listOf(position.column, position.endColumn)
+            if(position.isValidPosition) listOf(position.column, position.endColumn)
+            else listOf(0,0)
         }
     }
 
@@ -72,7 +73,8 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             listOf(0,0)
         } catch (e: IllegalStateException){
             position = astDiff.afterChange(op.action).position
-            listOf(position.line, position.endLine)
+            if(position.isValidPosition) listOf(position.line, position.endLine)
+            else listOf(0,0)
         }
     }
 
