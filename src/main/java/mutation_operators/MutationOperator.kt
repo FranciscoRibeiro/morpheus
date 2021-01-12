@@ -2,7 +2,9 @@ package mutation_operators
 
 import ASTDiff
 import com.github.gumtreediff.actions.model.Action
+import gumtree.spoon.diff.operations.DeleteOperation
 import gumtree.spoon.diff.operations.Operation
+import gumtree.spoon.diff.operations.UpdateOperation
 import spoon.reflect.cu.SourcePosition
 
 abstract class MutationOperator<T: MutationOperator<T>> {
@@ -23,10 +25,14 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             else -> null
         }
         if(mutOp != null){
-            val oldStartEndLineList = opsSubList.flatMap { oldStartAndEndLine(it) }
-            val oldStartEndColumnList = opsSubList.flatMap { oldStartAndEndColumn(it) }
-            val newStartEndLineList = opsSubList.flatMap { newStartAndEndLine(it, astDiff) }
-            val newStartEndColumnList = opsSubList.flatMap { newStartAndEndColumn(it, astDiff) }
+//            val oldStartEndLineList = opsSubList.flatMap { oldStartAndEndLine(it) }
+            val oldStartEndLineList = oldStartAndEndLine(opsSubList.first())
+//            val oldStartEndColumnList = opsSubList.flatMap { oldStartAndEndColumn(it) }
+            val oldStartEndColumnList = oldStartAndEndColumn(opsSubList.first())
+//            val newStartEndLineList = opsSubList.flatMap { newStartAndEndLine(it, astDiff) }
+            val newStartEndLineList = newStartAndEndLine(opsSubList.last(), astDiff)
+//            val newStartEndColumnList = opsSubList.flatMap { newStartAndEndColumn(it, astDiff) }
+            val newStartEndColumnList = newStartAndEndColumn(opsSubList.last(), astDiff)
             mutOp.oldStartLine = oldStartEndLineList.min() ?: 0
             mutOp.oldEndLine = oldStartEndLineList.max() ?: 0
             mutOp.oldStartColumn = oldStartEndColumnList.min() ?: 0
@@ -42,7 +48,8 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     private fun newStartAndEndColumn(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
         var position: SourcePosition
         return try {
-            position = op.dstNode.position
+//            position = op.dstNode.position
+            position = if(op is UpdateOperation || op is DeleteOperation) op.dstNode.position else op.srcNode.position
             listOf(position.column, position.endColumn)
         } catch (e: UnsupportedOperationException){
             listOf(0,0)
@@ -67,7 +74,8 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     private fun newStartAndEndLine(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
         var position: SourcePosition
         return try {
-            position = op.dstNode.position
+//            position = op.dstNode.position
+            position = if(op is UpdateOperation || op is DeleteOperation) op.dstNode.position else op.srcNode.position
             listOf(position.line, position.endLine)
         } catch (e: UnsupportedOperationException){
             listOf(0,0)
