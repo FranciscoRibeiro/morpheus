@@ -7,6 +7,7 @@ import gumtree.spoon.diff.operations.MoveOperation
 import gumtree.spoon.diff.operations.Operation
 import spoon.reflect.code.CtBinaryOperator
 import spoon.reflect.code.CtExpression
+import spoon.reflect.code.CtIf
 import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isConditional
@@ -33,8 +34,12 @@ class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInser
         val (insSrc, movSrc) = Pair(insOp.srcNode, movOp.srcNode)
         val insOpParent = insOp.parent
         if (insOpParent !is CtExpression<*> || isPartOf(movOp.dstNode, insOpParent)) {
-            return if (insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind) && insSrc == movOp.parent) {
-                ConditionalOperatorInsertion(movSrc, insSrc)
+            return if (insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind)){
+                if (insSrc == movOp.parent) {
+                    ConditionalOperatorInsertion(movSrc, insSrc)
+                } else if (insOpParent == movSrc) {
+                    ConditionalOperatorInsertion((movSrc as? CtIf)?.condition as CtExpression, insSrc)
+                } else null
             } else null
         }
         return null
