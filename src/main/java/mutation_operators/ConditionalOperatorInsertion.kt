@@ -12,6 +12,7 @@ import spoon.reflect.code.CtVariableRead
 import spoon.reflect.declaration.CtElement
 import utils.isConditional
 import utils.isPartOf
+import utils.simpleExpr
 
 class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInsertion>() {
     lateinit var fromElem: CtElement
@@ -47,8 +48,11 @@ class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInser
 
     private fun checkDeleteAndInsert(delOp: DeleteOperation, insOp: InsertOperation): MutationOperator<ConditionalOperatorInsertion>? {
         val (delSrc, insSrc) = Pair(delOp.srcNode, insOp.srcNode)
-        return if (delSrc is CtVariableRead<*> && insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind)) {
-            val (delVar, insLeftOp, insRightOp) = Triple(delSrc.toString(), insSrc.leftHandOperand, insSrc.rightHandOperand)
+        return if (delSrc is CtExpression<*> && insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind)) {
+            val (delVar, insLeftOp, insRightOp) =
+                    Triple(simpleExpr(delSrc).toString(),
+                            simpleExpr(insSrc.leftHandOperand),
+                            simpleExpr(insSrc.rightHandOperand)) // simpleExpr clones some expressions, helping remove parenthesis which obfuscate equality
             if (delVar == insLeftOp.toString() || delVar == insRightOp.toString()) {
                 ConditionalOperatorInsertion(delSrc, insSrc)
             } else null

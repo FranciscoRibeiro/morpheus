@@ -130,6 +130,6 @@ fun <T> simpleExpr(expr: CtExpression<T>): CtExpression<T> {
             newExpr.setVariable<CtVariableAccess<T>>(expr.variable)
             newExpr
         }
-        else -> expr
+        else -> expr.clone()
     }
 }
