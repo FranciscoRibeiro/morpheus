@@ -6,6 +6,7 @@ import gumtree.spoon.diff.operations.DeleteOperation
 import gumtree.spoon.diff.operations.Operation
 import gumtree.spoon.diff.operations.UpdateOperation
 import spoon.reflect.cu.SourcePosition
+import spoon.reflect.declaration.CtExecutable
 
 abstract class MutationOperator<T: MutationOperator<T>> {
     var oldStartLine: Int = 0
@@ -16,6 +17,7 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     var newEndLine: Int = 0
     var newStartColumn = 0
     var newEndColumn = 0
+    var enclosingMethodOrConstructor: CtExecutable<*>? = null
 
     fun matches(opsSubList: List<Operation<Action>>, astDiff: ASTDiff): MutationOperator<T>? {
         val mutOp = when(opsSubList.size){
@@ -41,8 +43,13 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             mutOp.newEndLine = newStartEndLineList.max() ?: 0
             mutOp.newStartColumn = newStartEndColumnList.min() ?: 0
             mutOp.newEndColumn = newStartEndColumnList.max() ?: 0
+            mutOp.enclosingMethodOrConstructor = inferEnclosingMethodOrConstructor(opsSubList.first())
         }
         return mutOp
+    }
+
+    private fun inferEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
+        return op.srcNode.getParent(CtExecutable::class.java)
     }
 
     private fun newStartAndEndColumn(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
