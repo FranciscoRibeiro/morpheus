@@ -9,9 +9,9 @@ fun infer(originalFile: String, mutantFile: String): String {
             "${astDiff.fullMutantName()};" +
             "${astDiff.size()};" +
             "${astDiff.getChanges()};" +
-            "\"${inferredMutOps.map { it.toString().replace("\"", "\"\"") }}\";" +
+            "\"${inferredMutOps.map { it.toString().replace("\"", "\\\"") }}\";" +
             "${inferredMutOps.map { it.javaClass.simpleName }};" +
-            "${inferredMutOps.map { it.enclosingMethodOrConstructor?.signature }}" +
+            "${inferredMutOps.map { it.enclosingMethodOrConstructor?.signature }};" +
             "${inferredMutOps.map { "${it.oldStartLine}-${it.oldEndLine}" }};" +
             "${inferredMutOps.map { "${it.oldStartColumn}-${it.oldEndColumn}" }};" +
             "${inferredMutOps.map { "${it.newStartLine}-${it.newEndLine}" }};" +
