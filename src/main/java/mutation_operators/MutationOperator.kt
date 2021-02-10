@@ -17,6 +17,10 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     var newEndLine: Int = 0
     var newStartColumn = 0
     var newEndColumn = 0
+    var relativeOldStartLine: Int = 0
+    var relativeOldEndLine: Int = 0
+    var relativeNewStartLine: Int = 0
+    var relativeNewEndLine: Int = 0
     var enclosingMethodOrConstructor: CtExecutable<*>? = null
 
     fun matches(opsSubList: List<Operation<Action>>, astDiff: ASTDiff): MutationOperator<T>? {
@@ -27,13 +31,9 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             else -> null
         }
         if(mutOp != null){
-//            val oldStartEndLineList = opsSubList.flatMap { oldStartAndEndLine(it) }
             val oldStartEndLineList = oldStartAndEndLine(opsSubList.first())
-//            val oldStartEndColumnList = opsSubList.flatMap { oldStartAndEndColumn(it) }
             val oldStartEndColumnList = oldStartAndEndColumn(opsSubList.first())
-//            val newStartEndLineList = opsSubList.flatMap { newStartAndEndLine(it, astDiff) }
             val newStartEndLineList = newStartAndEndLine(opsSubList.last(), astDiff)
-//            val newStartEndColumnList = opsSubList.flatMap { newStartAndEndColumn(it, astDiff) }
             val newStartEndColumnList = newStartAndEndColumn(opsSubList.last(), astDiff)
             mutOp.oldStartLine = oldStartEndLineList.min() ?: 0
             mutOp.oldEndLine = oldStartEndLineList.max() ?: 0
@@ -43,12 +43,29 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             mutOp.newEndLine = newStartEndLineList.max() ?: 0
             mutOp.newStartColumn = newStartEndColumnList.min() ?: 0
             mutOp.newEndColumn = newStartEndColumnList.max() ?: 0
-            mutOp.enclosingMethodOrConstructor = inferEnclosingMethodOrConstructor(opsSubList.first())
+            mutOp.enclosingMethodOrConstructor = inferSrcEnclosingMethodOrConstructor(opsSubList.first())
+            if (mutOp.enclosingMethodOrConstructor != null){
+                mutOp.calcRelatives(opsSubList)
+            }
         }
         return mutOp
     }
 
-    private fun inferEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
+    private fun calcRelatives(opsSubList: List<Operation<Action>>) {
+        if(enclosingMethodOrConstructor != null) {
+            relativeOldStartLine = calcRelativeLine(enclosingMethodOrConstructor!!, oldStartLine)
+            relativeOldEndLine = calcRelativeLine(enclosingMethodOrConstructor!!, oldEndLine)
+            val newEnclosingMethodOrConstructor = inferDstEnclosingMethodOrConstructor(opsSubList.last()) ?: return
+            relativeNewStartLine = calcRelativeLine(newEnclosingMethodOrConstructor, newStartLine)
+            relativeNewEndLine = calcRelativeLine(newEnclosingMethodOrConstructor, newEndLine)
+        } else return
+    }
+
+    private fun inferDstEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
+        return op.dstNode.getParent(CtExecutable::class.java)
+    }
+
+    private fun inferSrcEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
         return op.srcNode.getParent(CtExecutable::class.java)
     }
 
@@ -115,4 +132,9 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     open fun check(op1: Operation<Action>, op2: Operation<Action>, op3: Operation<Action>): MutationOperator<T>? {
         return null
     }
+}
+
+private fun calcRelativeLine(executable: CtExecutable<*>, nr: Int): Int {
+    return if (nr == 0) 0
+    else nr - executable.position.line
 }

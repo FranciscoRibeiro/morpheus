@@ -15,7 +15,9 @@ fun infer(originalFile: String, mutantFile: String): String {
             "${inferredMutOps.map { "${it.oldStartLine}-${it.oldEndLine}" }};" +
             "${inferredMutOps.map { "${it.oldStartColumn}-${it.oldEndColumn}" }};" +
             "${inferredMutOps.map { "${it.newStartLine}-${it.newEndLine}" }};" +
-            "${inferredMutOps.map { "${it.newStartColumn}-${it.newEndColumn}" }}"
+            "${inferredMutOps.map { "${it.newStartColumn}-${it.newEndColumn}" }};" +
+            "${inferredMutOps.map { "${it.relativeOldStartLine}-${it.relativeOldEndLine}" }};" +
+            "${inferredMutOps.map { "${it.relativeNewStartLine}-${it.relativeNewEndLine}" }}"
 }
 
 fun main(args: Array<String>) {
