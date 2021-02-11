@@ -3,6 +3,7 @@ package mutation_operators
 import ASTDiff
 import com.github.gumtreediff.actions.model.Action
 import gumtree.spoon.diff.operations.DeleteOperation
+import gumtree.spoon.diff.operations.InsertOperation
 import gumtree.spoon.diff.operations.Operation
 import gumtree.spoon.diff.operations.UpdateOperation
 import spoon.reflect.cu.SourcePosition
@@ -69,7 +70,9 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     }
 
     private fun inferDstEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
-        return op.dstNode.getParent(CtExecutable::class.java)
+        return if (op.dstNode != null)
+            op.dstNode.getParent(CtExecutable::class.java)
+        else inferSrcEnclosingMethodOrConstructor(op)
     }
 
     private fun inferSrcEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
@@ -79,8 +82,7 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     private fun newStartAndEndColumn(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
         var position: SourcePosition
         return try {
-//            position = op.dstNode.position
-            position = if(op is UpdateOperation || op is DeleteOperation) op.dstNode.position else op.srcNode.position
+            position = if(op is InsertOperation) op.srcNode.position else op.dstNode.position
             listOf(position.column, position.endColumn)
         } catch (e: UnsupportedOperationException){
             listOf(0,0)
@@ -93,7 +95,7 @@ abstract class MutationOperator<T: MutationOperator<T>> {
 
     private fun oldStartAndEndColumn(op: Operation<Action>): List<Int> {
         return try {
-            val position = op.srcNode.position
+            val position = if (op is InsertOperation) op.parent.position else op.srcNode.position
             listOf(position.column, position.endColumn)
         } catch (e: UnsupportedOperationException){
             listOf(0,0)
@@ -105,8 +107,7 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     private fun newStartAndEndLine(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
         var position: SourcePosition
         return try {
-//            position = op.dstNode.position
-            position = if(op is UpdateOperation || op is DeleteOperation) op.dstNode.position else op.srcNode.position
+            position = if(op is InsertOperation) op.srcNode.position else op.dstNode.position
             listOf(position.line, position.endLine)
         } catch (e: UnsupportedOperationException){
             listOf(0,0)
@@ -119,7 +120,7 @@ abstract class MutationOperator<T: MutationOperator<T>> {
 
     private fun oldStartAndEndLine(op: Operation<Action>): List<Int> {
         return try {
-            val position = op.srcNode.position
+            val position = if (op is InsertOperation) op.parent.position else op.srcNode.position
             listOf(position.line, position.endLine)
         } catch (e: UnsupportedOperationException){
             listOf(0,0)
