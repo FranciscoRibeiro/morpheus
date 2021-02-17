@@ -38,8 +38,8 @@ class ConditionalOperatorInsertion() : MutationOperator<ConditionalOperatorInser
             return if (insSrc is CtBinaryOperator<*> && isConditional(insSrc.kind)){
                 if (insSrc == movOp.parent) {
                     ConditionalOperatorInsertion(movSrc, insSrc)
-                } else if (insOpParent == movSrc) {
-                    ConditionalOperatorInsertion((movSrc as? CtIf)?.condition as CtExpression, insSrc)
+                } else if (isPartOf(movOp.dstNode, insSrc)){
+                    ConditionalOperatorInsertion(movSrc, insSrc)
                 } else null
             } else null
         }
