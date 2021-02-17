@@ -70,13 +70,13 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     }
 
     private fun inferDstEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
-        return if (op.dstNode != null)
-            op.dstNode.getParent(CtExecutable::class.java)
-        else inferSrcEnclosingMethodOrConstructor(op)
+        return if (op.dstNode != null) op.dstNode.getParent(CtExecutable::class.java)
+        else op.srcNode.getParent(CtExecutable::class.java)
     }
 
     private fun inferSrcEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
-        return op.srcNode.getParent(CtExecutable::class.java)
+        return if(op is InsertOperation) op.parent.getParent(CtExecutable::class.java)
+        else op.srcNode.getParent(CtExecutable::class.java)
     }
 
     private fun newStartAndEndColumn(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
