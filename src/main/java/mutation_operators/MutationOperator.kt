@@ -144,5 +144,10 @@ abstract class MutationOperator<T: MutationOperator<T>> {
 
 private fun calcRelativeLine(executable: CtExecutable<*>, nr: Int): Int {
     return if (nr == 0) 0
-    else nr - executable.position.line
+    else nr - execBeginLine(executable)
+}
+
+private fun execBeginLine(executable: CtExecutable<*>): Int {
+    return if(executable.annotations.isEmpty()) executable.position.line
+    else executable.annotations[0].position.line //if there are annotations, consider those to be the beginning
 }
