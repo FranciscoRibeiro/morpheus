@@ -5,9 +5,9 @@ import com.github.gumtreediff.actions.model.Action
 import gumtree.spoon.diff.operations.DeleteOperation
 import gumtree.spoon.diff.operations.InsertOperation
 import gumtree.spoon.diff.operations.Operation
-import gumtree.spoon.diff.operations.UpdateOperation
 import spoon.reflect.cu.SourcePosition
 import spoon.reflect.declaration.CtClass
+import spoon.reflect.declaration.CtElement
 import spoon.reflect.declaration.CtExecutable
 
 abstract class MutationOperator<T: MutationOperator<T>> {
@@ -46,38 +46,38 @@ abstract class MutationOperator<T: MutationOperator<T>> {
             mutOp.newEndLine = newStartEndLineList.max() ?: 0
             mutOp.newStartColumn = newStartEndColumnList.min() ?: 0
             mutOp.newEndColumn = newStartEndColumnList.max() ?: 0
-            mutOp.enclosingMethodOrConstructor = inferSrcEnclosingMethodOrConstructor(opsSubList.first())
-            if (mutOp.enclosingMethodOrConstructor != null){
+            mutOp.enclosingMethodOrConstructor = inferEnclosingMethodOrConstructor(srcTargetNode(opsSubList.first()))
+            /*if (mutOp.enclosingMethodOrConstructor != null){
                 mutOp.enclosingClass = inferEnclosingClass(mutOp.enclosingMethodOrConstructor!!)
-                mutOp.calcRelatives(opsSubList)
-            }
+            }*/
+            mutOp.enclosingClass = inferEnclosingClass(mutOp.enclosingMethodOrConstructor ?: srcTargetNode(opsSubList.first()))
+            mutOp.calcRelatives(opsSubList, astDiff)
         }
         return mutOp
     }
 
-    private fun inferEnclosingClass(executable: CtExecutable<*>): CtClass<*>? {
-        return executable.getParent(CtClass::class.java)
-    }
-
-    private fun calcRelatives(opsSubList: List<Operation<Action>>) {
-        if(enclosingMethodOrConstructor != null) {
-            relativeOldStartLine = calcRelativeLine(enclosingMethodOrConstructor!!, oldStartLine)
-            relativeOldEndLine = calcRelativeLine(enclosingMethodOrConstructor!!, oldEndLine)
-            val newEnclosingMethodOrConstructor = inferDstEnclosingMethodOrConstructor(opsSubList.last()) ?: return
-            relativeNewStartLine = calcRelativeLine(newEnclosingMethodOrConstructor, newStartLine)
-            relativeNewEndLine = calcRelativeLine(newEnclosingMethodOrConstructor, newEndLine)
+    private fun calcRelatives(opsSubList: List<Operation<Action>>, astDiff: ASTDiff) {
+        val oldParentElem = enclosingMethodOrConstructor ?: enclosingClass
+        val newParentElem = inferEnclosingMethodOrConstructor(dstTargetNode(opsSubList.last(), astDiff)) ?: inferEnclosingClass(dstTargetNode(opsSubList.last(), astDiff))
+        if(oldParentElem != null && newParentElem != null) {
+            relativeOldStartLine = calcRelativeLine(oldParentElem, oldStartLine)
+            relativeOldEndLine = calcRelativeLine(oldParentElem, oldEndLine)
+//            val newEnclosingMethodOrConstructor = inferDstEnclosingMethodOrConstructor(opsSubList.last()) ?: return
+            relativeNewStartLine = calcRelativeLine(newParentElem, newStartLine)
+            relativeNewEndLine = calcRelativeLine(newParentElem, newEndLine)
         } else return
     }
 
-    private fun inferDstEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
+    /*private fun inferDstEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
         return if (op.dstNode != null) op.dstNode.getParent(CtExecutable::class.java)
         else op.srcNode.getParent(CtExecutable::class.java)
     }
 
     private fun inferSrcEnclosingMethodOrConstructor(op: Operation<Action>): CtExecutable<*>? {
-        return if(op is InsertOperation) op.parent.getParent(CtExecutable::class.java)
-        else op.srcNode.getParent(CtExecutable::class.java)
-    }
+        return srcTargetNode(op).getParent(CtExecutable::class.java)
+        *//*return if(op is InsertOperation) op.parent.getParent(CtExecutable::class.java)
+        else op.srcNode.getParent(CtExecutable::class.java)*//*
+    }*/
 
     private fun newStartAndEndColumn(op: Operation<Action>, astDiff: ASTDiff): List<Int> {
         var position: SourcePosition
@@ -142,12 +142,34 @@ abstract class MutationOperator<T: MutationOperator<T>> {
     }
 }
 
-private fun calcRelativeLine(executable: CtExecutable<*>, nr: Int): Int {
+private fun calcRelativeLine(elem: CtElement, nr: Int): Int {
     return if (nr == 0) 0
-    else nr - execBeginLine(executable)
+    else {
+        val beginLine = if(elem is CtExecutable<*>) execBeginLine(elem) else elem.position.line
+        nr - beginLine
+    }
 }
 
 private fun execBeginLine(executable: CtExecutable<*>): Int {
     return if(executable.annotations.isEmpty()) executable.position.line
     else executable.annotations[0].position.line //if there are annotations, consider those to be the beginning
+}
+
+private fun srcTargetNode(op: Operation<Action>): CtElement {
+    return if (op is InsertOperation) op.parent
+    else op.srcNode
+}
+
+private fun dstTargetNode(op: Operation<Action>, astDiff: ASTDiff): CtElement {
+    return if (op.dstNode != null) op.dstNode
+    else if(op is DeleteOperation) astDiff.afterChange(op.action)
+    else op.srcNode
+}
+
+private fun inferEnclosingMethodOrConstructor(elem: CtElement): CtExecutable<*>? {
+    return elem.getParent(CtExecutable::class.java)
+}
+
+private fun inferEnclosingClass(elem: CtElement): CtClass<*>? {
+    return elem.getParent(CtClass::class.java)
 }
