@@ -15,26 +15,36 @@ java -jar mut_op_infer.jar <path_to_original> <path_to_mutated>
 The output is a line with several fields, each separated by a _semicolon (;)_, with the following structure:
 
 ```
-<path_to_original>;<path_to_mutated>;NR_AST_TRANSFORMATIONS;[AST_TRANSFORMATIONS];[SMALL_OVERVIEW_MUTATION_OPERATORS];[MUTATION_OPERATORS];[START_END_LINES];[START_END_COLUMNS]
+<path_to_original>;<path_to_mutated>;ORIGINAL_FULL_NAME;MUTATED_FULL_NAME;NR_AST_TRANSFORMATIONS;[AST_TRANSFORMATION];[SMALL_OVERVIEW_MUTATION_OPERATOR];[MUTATION_OPERATOR];[CALLABLE];[OLD_START_END_LINES];[OLD_START_END_COLUMNS];[NEW_START_END_LINES];[NEW_START_END_COLUMNS];[RELATIVE_OLD_START_END_LINES];[RELATIVE_NEW_START_END_LINES]
 ```
 
-* First two fields are the provided input paths;
+* 1st and 2nd fields are the provided input paths;
+* 3rd and 4th fields are the full class names of each provided file;
 * ***NR_AST_TRANSFORMATIONS:*** Number of transformations made to the original AST in order to obtain the mutated AST;
-* ***[AST_TRANSFORMATIONS]:*** List of the transformations made to the original AST. These can be:
+* ***[AST_TRANSFORMATION]:*** Lists the transformations made to the original AST. These can be:
 
     * Delete
     * Insert
     * Move
     * Update
 
-* ***[SMALL_OVERVIEW_MUTATION_OPERATORS]:*** List of the **inferred** mutation operators. Each one has a small overview of the part of the code which was modified;
+* ***[SMALL_OVERVIEW_MUTATION_OPERATOR]:*** Lists the **inferred** mutation operators. Each one has a small overview of the modified code;
 
-* ***[MUTATION_OPERATORS]:*** List with the full names of all the **inferred** mutation operators;
+* ***[MUTATION_OPERATOR]:*** Lists the full names of all the **inferred** mutation operators;
 
-* ***[START_END_LINES]:*** List containing the start and
-end lines of the places in the source where the corresponding inferred mutation operator was detected (same index in inferred mutation operator list);
+* ***[CALLABLE]:*** Lists the method/constructor names where mutations were inferred;
 
-* ***[START_END_COLUMNS]:*** Similar to previous field but for column numbers.
+* ***[OLD_START_END_LINES]:*** Lists the start and end lines in the **original** file where mutations were detected;
+
+* ***[OLD_START_END_COLUMNS]:*** Similar to previous field but for column numbers;
+
+* ***[NEW_START_END_LINES]:*** Lists the start and end lines in the **mutated** file where mutations were detected;
+
+* ***[NEW_START_END_COLUMNS]:*** Similar to previous field but for column numbers;
+
+* ***[RELATIVE_OLD_START_END_LINES]:*** Lists the start and end lines inside the corresponding callable's body in the **original** file where mutations were detected;
+
+* ***[RELATIVE_NEW_START_END_LINES]:*** Similar to previous field but for the **mutated** file.
 
 ## Building the executable
 
